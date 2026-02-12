@@ -75,11 +75,11 @@ Config.EnableEffects = {
     enable = true,
     health = {
         enable = true,
-        amount = 200
+        amount = 50
     },
     armor = {
         enable = false,
-        amount = 100
+        amount = 10
     }
 }
 
