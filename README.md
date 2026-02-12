@@ -1,6 +1,6 @@
 # Lation's Oxy Run - Updated by Falsire
 
-# Falsire note: A massive thank you to Lation for uploading the original script, and making an awesome oxy script. This is to make sure the script is maintained. If there is any issues with the script, please let me know and I will get it fixed asap. 
+Falsire note: A massive thank you to Lation for uploading the original script, and making an awesome oxy script. This is to make sure the script is maintained. If there is any issues with the script, please let me know and I will get it fixed asap. 
 
 ## Script Information: 
 
