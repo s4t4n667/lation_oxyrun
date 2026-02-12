@@ -1,6 +1,11 @@
 # Lation's Oxy Run - Updated by Falsire
 
-# Falsire note: A massive thank you to Lation for uploading the original script, and making an awesome oxy script. This is to make sure the script is maintained. If there is any issues with the script, please let me know and I will get it fixed asap. 
+Falsire's Note: Have fun with this everyone! I know it was requested a lot by a few people!
+
+Credits: 
+
+Credits go to Lation for originally creating this amazing oxy run script. 
+Credits also to allyaminou for having this on their github, while it was ESX it was easy to covert back to qbx for everyone. 
 
 ## Script Information: 
 
