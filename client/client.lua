@@ -1,4 +1,4 @@
-local ox_target = exports.ox_target
+
 
 local missionActive = false
 local doctorList = {}
@@ -114,12 +114,12 @@ local startOxyRunOptions = {
 
 function startOxyRun:onEnter()
     spawnStartOxyRunPed()
-    ox_target:addLocalEntity(startOxyRunPed, startOxyRunOptions)
+    exports.ox_target:addLocalEntity(startOxyRunPed, startOxyRunOptions)
 end
 
 function startOxyRun:onExit()
     if startOxyRunPed then
-        ox_target:removeLocalEntity(startOxyRunPed)
+        exports.ox_target:removeLocalEntity(startOxyRunPed)
         DeleteEntity(startOxyRunPed)
     end
 end
@@ -128,7 +128,7 @@ end
 -- PHARMACY TARGET (THIS WAS MISSING)
 ---------------------------------------------------------
 
-ox_target:addSphereZone({
+exports.ox_target:addSphereZone({
     coords = selectPharmacy,
     radius = 2,
     debug = false,
@@ -177,14 +177,26 @@ ox_target:addSphereZone({
 -- DOCTOR LIST
 ---------------------------------------------------------
 
+local doctorList = {}
 for k, v in pairs(Config.DoctorNames) do
     doctorList[k] = {
         title = v,
-        icon = Config.ContextMenu.availableDoctorsIcon
+        icon = Config.ContextMenu.availableDoctorsIcon,
+        onSelect = function()
+            lib.setClipboard(v)
+
+            lib.notify({
+                title = 'Name Copied',
+                description = 'Doctor\'s name has been copied down',
+                position = 'top',
+                icon = Config.Target.availableDoctorsIcon,
+            })
+
+        end
     }
 end
 
-ox_target:addSphereZone({
+exports.ox_target:addSphereZone({
     coords = Config.AvailableDoctorListLocation,
     radius = 2,
     debug = false,
@@ -194,11 +206,10 @@ ox_target:addSphereZone({
             icon = Config.Target.availableDoctorsIcon,
             label = Config.Target.availableDoctors,
             onSelect = function()
-
                 lib.registerContext({
                     id = 'availableDoctorsMenu',
                     title = Config.ContextMenu.availableDoctorsMenuTitle,
-                    options = doctorList
+                    options = doctorList,
                 })
 
                 lib.showContext('availableDoctorsMenu')
@@ -206,6 +217,7 @@ ox_target:addSphereZone({
         }
     }
 })
+
 
 ---------------------------------------------------------
 -- CLIENT CALLBACKS
