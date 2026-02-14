@@ -3,10 +3,6 @@ local ox_inventory = exports.ox_inventory
 ---@type table<number, table>
 local pendingPrescriptions = {}
 
-local function dbg(msg)
-    print(('[lation_oxyrun] %s'):format(msg))
-end
-
 ---------------------------------------------------------
 -- ITEM COUNT
 ---------------------------------------------------------
@@ -23,7 +19,9 @@ lib.callback.register('lation_oxyrun:startOxyRun', function(source, price)
     price = tonumber(price) or 0
 
     if price <= 0 then
-        dbg(('startOxyRun invalid price src=%s price=%s'):format(source, price))
+        if Config.Debug then    
+            print(('startOxyRun invalid price src=%s price=%s'):format(source, price))
+        end
         return false
     end
 
@@ -32,13 +30,17 @@ lib.callback.register('lation_oxyrun:startOxyRun', function(source, price)
         local removed = ox_inventory:RemoveItem(source, moneyItem, price)
 
         if not removed then
-            dbg(('startOxyRun failed removeItem src=%s item=%s amount=%s'):format(source, moneyItem, price))
+            if Config.Debug then
+                print(('startOxyRun failed removeItem src=%s item=%s amount=%s'):format(source, moneyItem, price))
+            end
             return false
         end
     else
         local Player = exports.qbx_core:GetPlayer(source)
         if not Player then
-            dbg(('startOxyRun no player src=%s'):format(source))
+            if Config.Debug then
+                print(('startOxyRun no player src=%s'):format(source))
+            end
             return false
         end
 
@@ -46,7 +48,9 @@ lib.callback.register('lation_oxyrun:startOxyRun', function(source, price)
         local ok = Player.Functions.RemoveMoney(moneyType, price, 'lation_oxyrun')
 
         if not ok then
-            dbg(('startOxyRun failed RemoveMoney src=%s type=%s amount=%s'):format(source, moneyType, price))
+            if Config.Debug then
+                print(('startOxyRun failed RemoveMoney src=%s type=%s amount=%s'):format(source, moneyType, price))
+            end
             return false
         end
     end
@@ -54,11 +58,15 @@ lib.callback.register('lation_oxyrun:startOxyRun', function(source, price)
     local added = ox_inventory:AddItem(source, Config.BlankPrescription, Config.BlankPrescriptionRewardAmount or 1)
 
     if not added then
-        dbg(('startOxyRun failed AddItem src=%s item=%s'):format(source, Config.BlankPrescription))
+        if Config.Debug then
+            print(('startOxyRun failed AddItem src=%s item=%s'):format(source, Config.BlankPrescription))
+        end
         return false
     end
 
-    dbg(('startOxyRun SUCCESS src=%s price=%s'):format(source, price))
+    if Config.Debug then
+        print(('startOxyRun SUCCESS src=%s price=%s'):format(source, price))
+    end
     return true
 end)
 
@@ -70,13 +78,17 @@ lib.callback.register('lation_oxyrun:getItemMetadata', function(source)
     local inputData = pendingPrescriptions[source]
 
     if not inputData then
-        dbg(('getItemMetadata no pending src=%s'):format(source))
+        if Config.Debug then
+            print(('getItemMetadata no pending src=%s'):format(source))
+        end
         return false
     end
 
     local Player = exports.qbx_core:GetPlayer(source)
     if not Player then
-        dbg(('getItemMetadata no player src=%s'):format(source))
+        if Config.Debug then
+            print(('getItemMetadata no player src=%s'):format(source))
+        end
         return false
     end
 
@@ -89,13 +101,14 @@ lib.callback.register('lation_oxyrun:getItemMetadata', function(source)
     ---------------------------------------------------------
     -- DEBUG OUTPUT
     ---------------------------------------------------------
-
-    dbg("===== PRESCRIPTION DEBUG =====")
-    dbg("Character Name: " .. playerName)
-    dbg("Typed Name: " .. tostring(inputData[1]))
-    dbg("Typed Doctor: " .. tostring(inputData[6]))
-    dbg("Checkbox (Acute Pain): " .. tostring(inputData[4]))
-    dbg("================================")
+    if Config.Debug then
+        print("===== PRESCRIPTION DEBUG =====")
+        print("Character Name: " .. playerName)
+        print("Typed Name: " .. tostring(inputData[1]))
+        print("Typed Doctor: " .. tostring(inputData[6]))
+        print("Checkbox (Acute Pain): " .. tostring(inputData[4]))
+        print("================================")
+    end
 
     ---------------------------------------------------------
     -- DOCTOR VALIDATION (ANY CONFIG DOCTOR ALLOWED)
@@ -122,13 +135,17 @@ lib.callback.register('lation_oxyrun:getItemMetadata', function(source)
     ox_inventory:RemoveItem(source, Config.SignedPerscription, 1)
 
     if isFraud then
-        dbg("Prescription marked FRAUDULENT")
+        if Config.Debug then
+            print("Prescription marked FRAUDULENT")
+        end
         lib.callback.await('lation_oxyrun:fakeScript', source)
         pendingPrescriptions[source] = nil
         return false
     end
 
-    dbg("Prescription VALID - giving bottle")
+    if Config.Debug then
+        print("Prescription VALID - giving bottle")
+    end
 
     ox_inventory:AddItem(source, Config.OxyBottleItem, Config.OxyBottleQuantity or 1)
     pendingPrescriptions[source] = nil
@@ -143,7 +160,9 @@ end)
 AddEventHandler('ox_inventory:usedItem', function(playerId, name, slotId, metadata)
 
     if name == Config.BlankPrescription then
-        dbg(('usedItem blank_prescription src=%s slot=%s'):format(playerId, slotId))
+        if Config.Debug then
+            print(('usedItem blank_prescription src=%s slot=%s'):format(playerId, slotId))
+        end
 
         local inputData = lib.callback.await('lation_oxyrun:fillPrescriptionInfo', playerId)
         if not inputData then return end
@@ -164,7 +183,9 @@ AddEventHandler('ox_inventory:usedItem', function(playerId, name, slotId, metada
     end
 
     if name == Config.OxyBottleItem then
-        dbg(('usedItem oxy_bottle src=%s slot=%s'):format(playerId, slotId))
+        if Config.Debug then
+            print(('usedItem oxy_bottle src=%s slot=%s'):format(playerId, slotId))
+        end
 
         local opened = lib.callback.await('lation_oxyrun:openOxyBottle', playerId)
         if not opened then return end
@@ -175,7 +196,9 @@ AddEventHandler('ox_inventory:usedItem', function(playerId, name, slotId, metada
     end
 
     if name == Config.OxyPillItem then
-        dbg(('usedItem oxycontin src=%s slot=%s'):format(playerId, slotId))
+        if Config.Debug then
+            print(('usedItem oxycontin src=%s slot=%s'):format(playerId, slotId))
+        end
 
         local used = lib.callback.await('lation_oxyrun:useOxycontin', playerId)
         if not used then return end

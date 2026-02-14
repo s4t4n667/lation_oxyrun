@@ -1,5 +1,7 @@
 Config = {}
 
+Config.Debug = true
+
 ---------------------------------------------------------
 -- FRAMEWORK
 ---------------------------------------------------------
@@ -75,11 +77,11 @@ Config.EnableEffects = {
     enable = true,
     health = {
         enable = true,
-        amount = 50
+        amount = 200
     },
     armor = {
         enable = false,
-        amount = 10
+        amount = 100
     }
 }
 
