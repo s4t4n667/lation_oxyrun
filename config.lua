@@ -81,7 +81,8 @@ Config.EnableEffects = {
     },
     armor = {
         enable = false,
-        amount = 100
+        amount = 20,
+        stack = false, -- add on to existing armour?
     }
 }
 
