@@ -282,5 +282,16 @@ lib.callback.register('lation_oxyrun:setPedHealth', function()
 end)
 
 lib.callback.register('lation_oxyrun:setPedArmor', function()
-    SetPedArmour(cache.ped, Config.EnableEffects.armor.amount or 0)
+    local currentArmor = GetPedArmour(cache.ped)
+    local armorAmount = Config.EnableEffects.armor.amount or 0
+
+    if Config.EnableEffects.armor.stack then
+        local newArmor = currentArmor + armorAmount
+        if newArmor > 100 then newArmor = 100 end
+        SetPedArmour(cache.ped, newArmor)
+    else
+        if currentArmor < armorAmount then
+            SetPedArmour(cache.ped, armorAmount)
+        end
+    end
 end)
