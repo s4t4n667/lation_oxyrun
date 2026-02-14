@@ -251,10 +251,29 @@ lib.callback.register('lation_oxyrun:openOxyBottle', function()
 end)
 
 lib.callback.register('lation_oxyrun:useOxycontin', function()
+    local playerPed = PlayerPedId()
+
+    local animDict = "mp_suicide" 
+    local animName = "pill"
+
+    RequestAnimDict(animDict)
+    while not HasAnimDictLoaded(animDict) do
+        Wait(100)
+    end
+
+    TaskPlayAnim(playerPed, animDict, animName, 8.0, -8.0, Config.ProgressCircle.poppingOxyDuration, 49, 0, false, false, false)
+
     return lib.progressCircle({
         label = Config.ProgressCircle.poppingOxyLabel,
-        duration = Config.ProgressCircle.poppingOxyDuration,
-        canCancel = true
+        duration = Config.ProgressCircle.poppingOxyDuration, -- ideally 2500
+        position = 'bottom',
+        canCancel = false,
+        onFinish = function()
+            ClearPedTasks(playerPed)
+        end,
+        onCancel = function()
+            ClearPedTasks(playerPed)
+        end
     })
 end)
 
